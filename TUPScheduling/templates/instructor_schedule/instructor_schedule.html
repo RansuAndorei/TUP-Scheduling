@@ -55,7 +55,12 @@
 <section class="flex flex-wrap mb-20 overflow-hidden">
     <div class="w-full pt-10 pl-10 overflow-hidden xl:w-1/4 sm:pl-16 md:pl-16 ">
         <div class="mb-3 font-bold uppercase">
+            {% if request.user.professors %}
+            <h1>SECTION</h1>
+            {% else %}
             <h1>INSTRUCTOR</h1>
+            {% endif %}
+            
         </div>
 
         <!--Dropdown-->

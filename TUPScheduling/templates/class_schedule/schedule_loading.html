@@ -1,0 +1,220 @@
+
+{% extends 'base.html' %}
+
+{% load static wagtailimages_tags %}
+
+{% block content %}
+<style> 
+    *{
+        box-sizing: border-box;
+        margin: 0px; 
+        padding: 0px;
+    }
+
+    #container{
+        display: grid;
+        height: 100vh;
+        padding: 25px;
+    }
+
+    #gear1 {
+      margin: auto;
+      position: absolute;
+      animation: rotation 20s infinite linear;
+      width: 10vw;
+      height: 10vw;
+      left: 40vw;
+      top: 35vh;
+    }
+
+    #gear2 {
+      margin: auto;
+      position: absolute;
+      animation: reverse rotation 20s infinite linear;
+      width: 7vw;
+      height: 7vw;
+      left: 33.4vw;
+      top: 32.8vh;
+    }
+
+    #gear3 {
+      margin: auto;
+      position: absolute;
+      animation: reverse rotation 20s infinite linear;
+      width: 8vw;
+      height: 8vw;
+      left: 50vw;
+      top: 35vh;
+    }
+
+    #loading-text{
+        color: #282828;
+        background-color: white;
+        position: absolute;
+        bottom: .5vh;
+        left: 10vh;
+        font-size: 5vh;
+        padding: 0 30px;
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: bold;
+    }
+    
+    @keyframes rotation {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(359deg);
+        }
+    }
+
+    .dot1{  
+        animation: blink1 3s infinite linear;
+        opacity: 0;
+    }
+    .dot2{
+        animation: blink2 3s infinite linear;
+        opacity: 0;
+    }
+    .dot3{
+        animation: blink3 3s infinite linear ;
+        opacity: 0;
+    }
+    @keyframes blink1{
+        0%{opacity: 0;}
+        25%{opacity: 1;}
+        50%{opacity: 1;}
+        100%{opacity: 1;}
+    }
+    @keyframes blink2{
+        0%{opacity: 0;}
+        25%{opacity: 0;}
+        50%{opacity: 1;}
+        100%{opacity: 1;}
+    }
+    @keyframes blink3{
+        0%{opacity: 0;}
+        25%{opacity: 0;}
+        50%{opacity: 0;}
+        100%{opacity: 1;}
+    }
+
+
+    .box{
+        border:solid 25px #131313; 
+        position: relative;
+    }
+
+    #top-border{
+        height: 25px;
+        width: calc(100% + 25px);
+        background-color: white;
+        position: absolute;
+        top: -25px;
+        left: -25px;
+        animation: fade-right-left linear forwards 4s 6s;
+    }
+    #left-border{
+        height: calc(100% + 25px);
+        width: 25px;
+        background-color: white;
+        position: absolute;
+        left: -25px;
+    }
+    #left-border2{
+        height: 0;
+        width: 25px;
+        background-color: #131313;   
+        animation: fade-top-bottom linear forwards 2s 10s;
+    }
+    #right-border{
+        height: calc(100% + 25px);
+        width: 25px;
+        background-color: white;
+        position: absolute;
+        right: -25px;
+        top: -25px;
+        animation: fade-bottom-top linear forwards 2s 4s;
+    }
+    #bottom-border{
+        height: 25px;
+        width: calc(100% + 25px);
+        background-color: white;
+        position: absolute;
+        bottom: -25px;
+        display: flex;
+    }
+    #bottom-border-left{
+        height: 25px;
+        width: 10vw;
+        background-color: white;
+    }
+    #bottom-border-left2{
+        height: 25px;
+        width: 0;
+        background-color: #131313;
+        animation: fade-left-right2 linear forwards 1s 12s ;
+    }
+    #bottom-border-right{
+        height: 25px;
+        background-color: #131313;
+        width: 0;
+        animation: fade-left-right linear forwards 4s;
+    }
+    
+   
+
+    @keyframes fade-left-right{
+        100%{width: calc(100% - 10vw);}
+    }
+    @keyframes fade-bottom-top{
+        100%{height: 0;}
+    }
+    @keyframes fade-right-left{
+        100%{width: 0;}
+    }
+    @keyframes fade-top-bottom{
+        100%{height: 100%;}
+    }
+    @keyframes fade-left-right2{
+        100%{width: 100%;}
+    }
+</style>
+
+<meta http-equiv = "refresh" content = "2; url = /schedule/" />
+
+<section onload="getWidth">
+    <div id='container'>
+        <div class='box'>
+            <img id="gear1" src="{% static 'img/gear.png' %}">
+            <img id="gear2" src="{% static 'img/gear.png' %}">
+            <img id="gear3" src="{% static 'img/gear.png' %}">
+            <div id="top-border"></div>
+            <div id="left-border">
+                <div id="left-border2"></div>
+            </div>
+            <div id="right-border"></div>
+            <div id="bottom-border">
+                <div id="bottom-border-left">
+                    <div id="bottom-border-left2"></div>
+                </div>
+                <div id="bottom-border-right"></div>
+            </div>
+        </div> 
+
+        <div id="loading-text">
+            <p>Loading<span class="dot1">.</span><spanspan class="dot2">.</span><spanspan class="dot3">.</span></p>
+        </div>
+        
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<!--JS Scripts-->
+<script>
+    function getWidth(){
+        document.getElementById("container").style.width = window.innerWidth;
+    }
+</script>
+{% endblock %}

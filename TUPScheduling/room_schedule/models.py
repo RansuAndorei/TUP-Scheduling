@@ -4,10 +4,11 @@ from TUPScheduling.base.models import BasePage, Rooms
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from TUPScheduling import _COLOR, _CLASS_SCHEDULE, _DAY
 
+
 class RoomSchedule(RoutablePageMixin, Page):
     max_count = 1
     parent_page_types = [BasePage]
-    
+
     @route(r'^(\d+)/$')
     def fetch_schedule(self, request, id=None):
         room = Rooms.objects.get(pk=id)
@@ -37,7 +38,6 @@ class RoomSchedule(RoutablePageMixin, Page):
                 else:
                     schedule.new_time = str(schedule.starting_time) + " AM"
 
-
             return self.render(
                 request,
                 context_overrides={
@@ -54,7 +54,5 @@ class RoomSchedule(RoutablePageMixin, Page):
         context = super().get_context(request)
 
         context['rooms'] = Rooms.objects.all()
-        
 
         return context
-

@@ -556,11 +556,11 @@ class Rooms(models.Model, index.Indexed):
 
     floor = models.IntegerField(
         choices=[
-            (1,'1st Floor'),
-            (2,'2nd Floor'),
-            (3,'3rd Floor'),
-            (4,'4th Floor'),
-            (5,'5th Floor'),
+            (1, '1st Floor'),
+            (2, '2nd Floor'),
+            (3, '3rd Floor'),
+            (4, '4th Floor'),
+            (5, '5th Floor'),
         ],
         default=1
     )
@@ -594,11 +594,11 @@ class Rooms(models.Model, index.Indexed):
 
     def floor_display(self):
         return dict([
-            (1,'1st Floor'),
-            (2,'2nd Floor'),
-            (3,'3rd Floor'),
-            (4,'4th Floor'),
-            (5,'5th Floor'),
+            (1, '1st Floor'),
+            (2, '2nd Floor'),
+            (3, '3rd Floor'),
+            (4, '4th Floor'),
+            (5, '5th Floor'),
         ]).get(self.floor)
 
     @property
@@ -609,7 +609,6 @@ class Rooms(models.Model, index.Indexed):
             return self.room_image.get_rendition('fill-150x150').img_tag()
         except:  # noqa: E722 FIXME: remove bare 'except:'
             return ''
-
 
     def __str__(self): return self.Room_Name + "  " + self.Room_Type
 
@@ -632,7 +631,7 @@ class Colleges(ClusterableModel, index.Indexed):
         FieldPanel('college_name'),
 
     ]
-    
+
     def acronym(self):
         return "".join(e[0] for e in self.college_name.split())
 
@@ -646,8 +645,10 @@ class Colleges(ClusterableModel, index.Indexed):
             'college_name'
         ]
 
+
 class BasePage(Page):
     max_count = 1
+
     def serve(self, request):
         if request.user.is_authenticated is False:
             return HttpResponseRedirect('/logout/')
@@ -659,4 +660,3 @@ class BasePage(Page):
             return HttpResponseRedirect('/class-schedule/')
 
         return HttpResponseRedirect('/logout/')
-

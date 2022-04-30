@@ -49,8 +49,7 @@ class BaseAccount(ClusterableModel, index.Indexed):
         blank=True,
         on_delete=models.SET_NULL,
     )
-    
-    
+
     choose_department = models.ForeignKey(
         'base.Departments',
         null=True,
@@ -163,7 +162,6 @@ class Professors(BaseAccount):
                 _('End time must be greater than start time'),
             )
 
-
     preferred_start_time = models.TimeField(
         auto_now=False,
         auto_now_add=False,
@@ -196,8 +194,6 @@ class Professors(BaseAccount):
         choices=[('Regular', 'Regular'), ('Part-time', 'Part-time')]
     )
 
-    
-
     BaseAccount.basic_info_panel = BaseAccount.basic_info_panel + [
         ImageChooserPanel('profile_picture'),
         FieldPanel('is_scheduler')
@@ -212,6 +208,45 @@ class Professors(BaseAccount):
         except:  # noqa: E722 FIXME: remove bare 'except:'
             return ''
 
+    faculty_rank = models.TextField(
+        choices=[
+            ('Instructor', 'Instructor'),
+            ('Assistant Professor', 'Assistant Professor'),
+            ('Associate Professor', 'Associate Professor'),
+            ('Professor', 'Professor'),
+            ('University Professor', 'University Professor'),
+        ],
+        default='Instructor'
+    )
+
+    sub_rank = models.IntegerField(
+        choices=[
+            (1, 'I'),
+            (2, 'II'),
+            (3, 'III'),
+            (4, 'IV'),
+            (5, 'V'),
+            (6, 'VI'),
+        ],
+        default=1
+    )
+
+    salary_grade = models.IntegerField(default=12)
+
+    step = models.IntegerField(
+        choices=[
+            (1, '1'),
+            (2, '2'),
+            (3, '3'),
+            (4, '4'),
+            (5, '5'),
+            (6, '6'),
+            (7, '7'),
+            (7, '8'),
+        ],
+        default=1
+    )
+
     scheduling_panel = [
         MultiFieldPanel(
             [
@@ -221,19 +256,33 @@ class Professors(BaseAccount):
             heading='Preferred Time',
         ),
         FieldPanel('status', widget=forms.RadioSelect),
+        MultiFieldPanel(
+            [
+                FieldPanel('faculty_rank',  widget=forms.Select),
+                FieldPanel('sub_rank',),
+            ],
+            heading='Position',
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel('salary_grade',),
+                FieldPanel('step',),
+            ],
+            heading='Salary',
+        ),
         SnippetChooserPanel('choose_department'),
     ]
 
     subject_panel = [
         MultiFieldPanel([
             InlinePanel('professor_parental_key',
-                        label='Subject', min_num=1, max_num=4)
+                        label='Subject', min_num=1, max_num=6)
         ], heading='Preferred Subjects')
     ]
 
     edit_handler = TabbedInterface(
         [
-            ObjectList(BaseAccount.basic_info_panel, heading='Profesor Info'),
+            ObjectList(BaseAccount.basic_info_panel, heading='Professor Info'),
             ObjectList(scheduling_panel, heading="Scheduling Requirements"),
             ObjectList(subject_panel, heading="Subjects"),
         ]

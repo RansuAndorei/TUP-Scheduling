@@ -1,0 +1,354 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% load base_tags %}
+
+{% block header %}
+
+<!--Header-->
+<header>
+  <div class="p-10 font-bold text-center place-self-center">
+      <a href="#">
+        <img class="mx-auto mb-2" src="{% static 'img/icons/tuplogo.webp' %}" alt="tup logo">
+          <h1>TECHNOLOGICAL UNIVERSITY</h1>
+          <h1>OF THE PHILIPPINES</h1>
+      </a>
+  </div>
+</header>
+
+
+<!--Navbar-->
+<nav class="bg-red-700 ">
+  <div class="flex justify-end text-white lg:hidden">
+    <button class="p-4 mobile-menu-button focus:outline-none focus:bg-red-600">
+      <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="flex justify-center">
+    <div class="fixed inset-y-0 left-0 z-10 px-2 space-y-6 transition duration-150 ease-in-out transform -translate-x-full bg-red-700 sidebar lg:relative lg:translate-x-0">
+      <div class="w-full lg:flex">
+        <div class="pb-4 lg:flex md:pb-0">
+          <ul class="pb-2 text-white md:pb-0 lg:flex ">
+            <li class="mr-20"><a class="block px-0 py-2 pt-4 border-b-2 border-transparent lg:px-3 hover:border-white" href="/class-schedule/all-schedule-sections/"><span></span>
+                SECTIONS SCHEDULE
+            </span></a></li>
+            <li class="mr-20"><a class="block px-0 py-2 pt-4 border-b-2 border-transparent border-white lg:px-3" href="/class-schedule/all-schedule-professors/"><span>PROFESSOR SCHEDULE</span></a></li>
+            <li><a class="block px-0 py-2 pt-4 border-b-2 border-transparent lg:px-3 hover:border-white" href="/class-schedule/all-schedule-rooms/"><span>ROOM SCHEDULE</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+{% endblock %}
+
+{% block content %}
+<section class="flex flex-wrap mb-20 overflow-hidden">
+    <div class="w-full pt-10 pl-10 overflow-hidden xl:w-1/4 sm:pl-16 md:pl-16 ">
+        <div class="mb-3 font-bold uppercase">
+            <h1>SECTION</h1>
+        </div>
+
+        <!--Dropdown-->
+        <div class="antialiased text-gray-900">
+          <div class="flex">
+            <div class="w-72">
+              <div class="space-y-1" x-data="Components.customSelect({ open: false, value: 4, selected: 4 })" x-init="init()">
+                <div class="relative">
+                  <span class="inline-block w-56 rounded-md shadow-sm">
+                    <button x-ref="button" @click="onButtonClick()" type="button" aria-haspopup="listbox" :aria-expanded="open" aria-labelledby="assigned-to-label" class="relative w-full py-2 pl-3 pr-10 text-left transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md cursor-default focus:outline-none focus:shadow-outline-blue focus:border-blue-300 sm:text-sm sm:leading-5">
+                      <div class="flex items-center space-x-3">
+                        <span x-text="{{ list_of_professor_names }}[ value-1 ]" class="block truncate">- Select -</span>
+                      </div>
+                      <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                        </svg>
+                      </span>
+                    </button>
+                  </span>
+                  <div x-show="open" @focusout="onEscape()" @click.away="open = false" x-description="Select popover, show/hide based on select state." x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute w-full mt-1 bg-white rounded-md shadow-lg" style="display: none;">
+                    <ul @keydown.enter.stop.prevent="onOptionSelect()" @keydown.space.stop.prevent="onOptionSelect()" @keydown.escape="onEscape()" @keydown.arrow-up.prevent="onArrowUp()" @keydown.arrow-down.prevent="onArrowDown()" x-ref="listbox" tabindex="-1" role="listbox" aria-labelledby="assigned-to-label" :aria-activedescendant="activeDescendant" class="py-1 overflow-auto text-base leading-6 rounded-md shadow-xs focus:outline-none sm:text-sm sm:leading-5">
+                      
+                      {% for professor in list_of_professors %}
+                        <li onclick="choose(this)" id="assigned-to-option-{{forloop.counter}}" role="option" @click="choose({{forloop.counter}})" @mouseenter="selected = {{forloop.counter}}" @mouseleave="selected = null" :class="{ 'text-white bg-red-600': selected === {{forloop.counter}}, 'text-gray-900': !(selected === {{forloop.counter}}) }" class="relative py-2 pl-4 text-gray-900 cursor-default select-none pr-9">
+                          <div class="flex items-center space-x-3">
+                            <span :class="{ 'font-semibold': value === {{forloop.counter}}, 'font-normal': !(value === {{forloop.counter}}) }" class="block font-normal truncate professor_chosen ">
+                                {{ professor.first_name }} {{ professor.middle_name }}. {{ professor.last_name }}
+                            </span>
+                          </div>
+                          <span x-show="value === {{forloop.counter}}" :class="{ 'text-white': selected === {{forloop.counter}}, 'text-red-600': !(selected === {{forloop.counter}}) }" class="absolute inset-y-0 right-0 flex items-center pr-4 text-red-600" style="display: none;">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                        </li>
+                      {% endfor %}
+
+                      
+
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--Subject Legend-->
+        <div class="w-56 mt-4 border-b-2 border-gray-300 rounded"></div>
+        <div class="hidden mt-2 capitalize lg:block">
+            <h2 class="py-2 font-bold">subjects</h2>
+
+            {% for professor in professor_objects %}
+                {% for subject in professor.subjects %}
+                  <div class="flex flex-row mb-2 subject_list" professor_name='{{ professor.name }}' style="display:none; align-items: center;">
+                      <div class="w-8 h-8 bg-green-400 rounded-full circles" style="background-color: {{professor.colors | getColor:forloop.counter0}}"></div>
+
+                      <div style="max-width: 300px;">
+                        <h2 class="py-2 ml-2 leading-3" style="line-height: 20px;">{{ subject.description }}</h2>
+                      </div>
+                  </div>
+              {% endfor %}
+            {% endfor %}
+            
+        </div>
+    </div>
+
+    <!--Table-->
+    {% for professor in professor_objects %}
+    <div class="z-0 hidden w-full pt-10 pr-10 overflow-auto xl:w-3/4 lg:block prof_schedule_table" style="display: none;" professor_name='{{ professor.name }}'>
+      <table class="font-bold uppercase border-4 border-collapse border-gray-300 table-fixed">
+          <thead>
+            <tr>
+              <th class="w-16 border-2 border-gray-300" style="height: 50px;">WK</th>
+              <th class="border-2 border-gray-300 w-36" style="height: 50px;">monday</th>
+              <th class="border-2 border-gray-300 w-36" style="height: 50px;">tuesday</th>
+              <th class="border-2 border-gray-300 w-36" style="height: 50px;">wednesday</th>
+              <th class="border-2 border-gray-300 w-36" style="height: 50px;">thursday</th>
+              <th class="border-2 border-gray-300 w-36" style="height: 50px;">friday</th>
+              <th class="border-2 border-gray-300 w-36" style="height: 50px;">saturday</th>
+            </tr>
+          </thead>
+          <tbody>
+
+              {% for time in class_schedule %}
+
+                <tr>
+                    <td class="text-center border-2 border-gray-300" style="height: 30px;">{{ time }}</td>
+                    {% for day in days %}
+                        <td class="border-2 border-gray-300" style="position: relative;">
+                        {% for schedule in schedules %}
+                            {% if schedule.day == day %}
+                                {% if time == schedule.new_time %}      
+                                    {% for subject in professor.subjects %}
+                                        {% if subject.description == schedule.subject.description %}
+                                        <div professor_name='{{schedule.prof}}' class="flex items-center professor_div" style="text-align: center; cursor:help; padding: 5px; display:flex; justify-content:center; width: 100%; height: calc({{ schedule.subject.hours }} * 60px); position: absolute; top: 0; left: 0; background-color: {{professor.colors | getColor:forloop.counter0}}" onmousedown="show_room(this, '{{schedule.room}}' )" onmouseup="unshow_room(this, '{{schedule.section}}' )">{{ schedule.section }}</div>
+                                        {% endif %}
+                                    {% endfor %} 
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        </td>
+                    {% endfor %}
+                </tr>
+
+                <tr>
+                  <td class="h-6 border-2 border-gray-300" style="height: 30px;"></td>
+                  <td class="border-2 border-gray-300" style="height: 30px;"></td>
+                  <td class="border-2 border-gray-300" style="height: 30px;"></td>
+                  <td class="border-2 border-gray-300" style="height: 30px;"></td>
+                  <td class="border-2 border-gray-300" style="height: 30px;"></td>
+                  <td class="border-2 border-gray-300" style="height: 30px;"></td>
+                  <td class="border-2 border-gray-300" style="height: 30px;"></td>
+                </tr>
+                
+              {% endfor %}
+
+          </tbody>
+        </table>
+    </div>
+    {% endfor %}
+
+    <div class="z-0 hidden w-full pt-10 pr-10 overflow-auto xl:w-3/4 lg:block prof_schedule_table" style="display: block;" professor_name='default'>
+      <table class="font-bold uppercase border-4 border-collapse border-gray-300 table-fixed">
+          <thead>
+            <tr>
+              <th class="w-16 border-2 border-gray-300" style="height: 50px;">WK</th>
+              <th class="border-2 border-gray-300 w-36" style="height: 50px;">monday</th>
+              <th class="border-2 border-gray-300 w-36" style="height: 50px;">tuesday</th>
+              <th class="border-2 border-gray-300 w-36" style="height: 50px;">wednesday</th>
+              <th class="border-2 border-gray-300 w-36" style="height: 50px;">thursday</th>
+              <th class="border-2 border-gray-300 w-36" style="height: 50px;">friday</th>
+              <th class="border-2 border-gray-300 w-36" style="height: 50px;">saturday</th>
+            </tr>
+          </thead>
+          <tbody>
+
+              {% for time in class_schedule %}
+
+                <tr>
+                  <td class="text-center border-2 border-gray-300" style="height: 30px;">{{ time }}</td>
+                  {% for day in days %}
+                    <td class="border-2 border-gray-300" style="position: relative;">
+                    {% for schedule in schedules %}
+
+                      {% if schedule.day == day %}
+                        {% if time == schedule.new_time %}
+
+                          <div class="flex items-center" style="text-align: center; cursor:help; padding: 5px; display:flex; justify-content:center; width: 100%; height: calc({{ schedule.subject.hours }} * 60px); position: absolute; top: 0; left: 0; background-color: {{ schedule.color }}" onmousedown="show_professor(this, '{{schedule.room}}' )"></div>
+                    
+                        {% endif %}
+                      {% endif %}
+
+                    {% endfor %}
+                  </td>
+                
+
+
+                  {% endfor %}
+                </tr>
+
+                <tr>
+                  <td class="h-6 border-2 border-gray-300" style="height: 30px;"></td>
+                  <td class="border-2 border-gray-300" style="height: 30px;"></td>
+                  <td class="border-2 border-gray-300" style="height: 30px;"></td>
+                  <td class="border-2 border-gray-300" style="height: 30px;"></td>
+                  <td class="border-2 border-gray-300" style="height: 30px;"></td>
+                  <td class="border-2 border-gray-300" style="height: 30px;"></td>
+                  <td class="border-2 border-gray-300" style="height: 30px;"></td>
+                </tr>
+                
+              {% endfor %}
+
+          </tbody>
+        </table>
+      </div>
+    
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+  //Sidebar
+  const btn = document.querySelector(".mobile-menu-button");
+  const sidebar = document.querySelector(".sidebar");
+  
+  
+  btn.addEventListener("click", () => {
+    sidebar.classList.toggle("-translate-x-full");
+  });
+
+  //Dropdown Select Function
+  window.Components = {
+    customSelect(options) {
+        return {
+        init() {
+            this.$refs.listbox.focus()
+            this.optionCount = this.$refs.listbox.children.length
+            this.$watch('selected', value => {
+            if (!this.open) return
+
+            if (this.selected === null) {
+                this.activeDescendant = ''
+                return
+            }
+
+            this.activeDescendant = this.$refs.listbox.children[this.selected - 1].id
+            })
+        },
+        activeDescendant: null,
+        optionCount: null,
+        open: false,
+        selected: null,
+        value: 1,
+        choose(option) {
+            this.value = option
+            this.open = false
+        },
+        onButtonClick() {
+            if (this.open) return
+            this.selected = this.value
+            this.open = true
+            this.$nextTick(() => {
+            this.$refs.listbox.focus()
+            this.$refs.listbox.children[this.selected - 1].scrollIntoView({ block: 'nearest' })
+            })
+        },
+        onOptionSelect() {
+            if (this.selected !== null) {
+            this.value = this.selected
+            }
+            this.open = false
+            this.$refs.button.focus()
+        },
+        onEscape() {
+            this.open = false
+            this.$refs.button.focus()
+        },
+        onArrowUp() {
+            this.selected = this.selected - 1 < 1 ? this.optionCount : this.selected - 1
+            this.$refs.listbox.children[this.selected - 1].scrollIntoView({ block: 'nearest' })
+        },
+        onArrowDown() {
+            this.selected = this.selected + 1 > this.optionCount ? 1 : this.selected + 1
+            this.$refs.listbox.children[this.selected - 1].scrollIntoView({ block: 'nearest' })
+        },
+        ...options,
+        }
+    },
+}
+
+function choose(chosen){
+  subject_list = document.getElementsByClassName('subject_list');
+  prof_schedule_table = document.getElementsByClassName('prof_schedule_table');
+  professor_div = document.getElementsByClassName('professor_div')
+  
+  for(let i = 0; i < subject_list.length; i++){
+    if(subject_list[i].getAttribute('professor_name') == chosen.innerText){
+      subject_list[i].style.display = null;
+    }else{
+      subject_list[i].style['display'] = 'none';
+    }
+  }
+
+  for(let i = 0; i < prof_schedule_table.length; i++){
+    if(prof_schedule_table[i].getAttribute('professor_name') == chosen.innerText){
+      prof_schedule_table[i].style.display = null;
+    }else{
+      prof_schedule_table[i].style['display'] = 'none';
+    }
+  }
+  
+  for(let i = 0; i < professor_div.length; i++){
+    if(professor_div[i].getAttribute('professor_name')){
+      professor_temp = professor_div[i].getAttribute('professor_name').split(",");
+      professor_temp = professor_temp[1].slice(1, professor_temp[1].length) + " " + professor_temp[0]
+      if(professor_temp == chosen.innerText){
+        professor_div[i].style.display = null;
+      }else{
+        professor_div[i].style['display'] = 'none';
+      }
+    }
+    
+  }
+
+}
+
+  function show_room(container, text){
+      container.innerText = text
+  }
+  
+  function unshow_room(container, text){
+    container.innerText = text
+  }
+
+
+</script>
+{% endblock %}

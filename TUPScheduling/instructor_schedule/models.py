@@ -15,14 +15,15 @@ class InstructorSchedule(Page):
 
         if hasattr(request.user, 'students'):
             final_schedule = Schedule.objects.all()
-
+            print(request.user.students.section)
             list_of_professors = []
 
             for schedule in final_schedule:
                 if schedule.prof == None:
                     continue
                 if schedule.prof not in list_of_professors:
-                    list_of_professors.append(schedule.prof)
+                    if request.user.students.section == schedule.section:
+                        list_of_professors.append(schedule.prof)
 
                 if schedule.starting_time < 7:
                     schedule.new_time = str(schedule.starting_time) + " PM"

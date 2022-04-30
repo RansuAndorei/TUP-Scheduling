@@ -13,6 +13,7 @@ from TUPScheduling.accounts.models import (
 from TUPScheduling import StringResources
 from TUPScheduling.accounts.views import ProfessorCreateView, StudentCreateView
 
+
 class Students(ModelAdmin):
     model = Students
     create_view_class = StudentCreateView
@@ -21,14 +22,16 @@ class Students(ModelAdmin):
     list_filter = ('first_name', 'section')
     search_fields = ('first_name', 'section')
 
+
 class Professors(ModelAdmin):
     model = Professors
     create_view_class = ProfessorCreateView
     index_template_name = 'account/professor_index_view.html'
     menu_label = 'Professors'
-    list_display = ('full_name', 'preferred_time', 'status', 'profile_image')
-    list_filter = ('status',)
-    search_fields = ('first_name', 'middle_name', 'last_name',)
+    list_display = ('full_name', 'preferred_time', 'status',
+                    'profile_image', 'faculty_rank')
+    list_filter = ('status', 'faculty_rank')
+    search_fields = ('first_name', 'middle_name', 'last_name', 'status')
 
 
 class AccountsGroup(ModelAdminGroup):
