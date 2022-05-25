@@ -162,7 +162,29 @@
         animation: fade-left-right linear forwards 4s;
     }
     
-   
+   .loading-container{
+       position: absolute;
+       width: 50vw;
+       height: 20vh;
+       bottom:5rem;
+       left: 50%;
+       transform: translateX(-27vw);
+       display:flex;
+       align-items: center;
+       justify-content: center;
+       gap: 4rem;
+   }
+
+   .text-container{
+        display:flex;
+        align-items: center;
+        justify-content: center;
+        gap:1rem
+   }
+
+   .ga-text{
+        font-size: 2rem;
+   }
 
     @keyframes fade-left-right{
         100%{width: calc(100% - 10vw);}
@@ -181,9 +203,9 @@
     }
 </style>
 
-<meta http-equiv = "refresh" content = "2; url = /schedule/" />
+<!-- <meta http-equiv = "refresh" content = "2; url = /schedule/" /> -->
 
-<section onload="getWidth">
+<section id="section-container">
     <div id='container'>
         <div class='box'>
             <img id="gear1" src="{% static 'img/gear.png' %}">
@@ -202,6 +224,17 @@
             </div>
         </div> 
 
+        <div class="loading-container">
+            <div class="text-container">
+                <p class="title">Fitness:</p>
+                <p id="fitness" class="ga-text">0</p>
+            </div>
+            <div class="text-container">
+                <p class="title">Generation:</p>
+                <p id="number-of-generations" class="ga-text">0</p>
+            </div>
+        </div>
+
         <div id="loading-text">
             <p>Loading<span class="dot1">.</span><spanspan class="dot2">.</span><spanspan class="dot3">.</span></p>
         </div>
@@ -212,9 +245,74 @@
 
 {% block scripts %}
 <!--JS Scripts-->
+<script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js">
+</script>
 <script>
+    document.getElementById("section-container").addEventListener("load", getWidth());
     function getWidth(){
         document.getElementById("container").style.width = window.innerWidth;
+        loading();
     }
+    async function loading(){
+        let generation = 1
+        let score = 200 * Math.random() + 500;
+        let max_score = 256 * 4 //number of classes
+        let val = 0
+        let divi = 10000
+        let max_repeat = 9999
+        let last_best = 0.0
+
+        const fitnessText = document.getElementById("fitness");
+        const generationText = document.getElementById("number-of-generations");
+
+        while(true){
+            console.log(`Fitness: ${score/max_score} Generation: ${generation}`)
+            if (score/max_score > .9999999999){
+                break;
+            }
+                
+            val = Math.random();
+            prob = 1 - ((score/max_score) ** (1/30))
+            if (val <= prob){
+                score += getRandomArbitrary(0,5);
+                if (score > max_score){
+                    score = max_score
+                }
+            }
+                
+            difference = Math.abs(score/max_score - last_best)
+            if (difference <= .00000001){
+                repeat += 1
+            }
+            else{
+                repeat = 0
+            }
+                
+                    
+            if (repeat > (max_repeat/100)){
+                if ((divi - 10) > 0){
+                    divi -= 10
+                }
+            }
+                
+            console.log((score/max_score)/divi)
+            await sleep((score/max_score)/divi);
+            last_best = score/max_score
+            generation += 1
+            fitnessText.innerText = (score/max_score).toFixed(10);
+            generationText.innerText = generation;
+        }
+        await sleep(5000);
+        document.location.href = "http://localhost:8000/schedule/";
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function getRandomArbitrary(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
 </script>
 {% endblock %}

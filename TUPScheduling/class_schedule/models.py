@@ -6,6 +6,7 @@ from TUPScheduling import _COLOR, _CLASS_SCHEDULE, _DAY
 from TUPScheduling.schedule.models import Schedule
 from TUPScheduling.base.models import BasePage, Rooms
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
+from TUPScheduling.class_schedule.masterpiece import main as loading
 
 
 class ClassSchedule(Page):
@@ -177,10 +178,14 @@ class ScheduleLoading(Page):
 
     def get_context(self, request):
         context = super().get_context(request)
+        # loading()
 
         return context
+    
 
 class AllScheduleProfessors(Page):
+    max_count = 1
+    parent_page_types = [BasePage]
     def get_context(self, request):
         context = super().get_context(request)
         
